@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:artos/models/sign_in_form_model.dart';
 import 'package:artos/models/sign_up_form_model.dart';
 import 'package:artos/shared/shared_values.dart';
 import 'package:http/http.dart' as http;
@@ -39,7 +40,28 @@ class AuthService {
       } else {
         throw jsonDecode(res.body)['message'];
       }
+    } catch (e) {
+      rethrow;
+    }
+  }
 
+  Future<UserModel> login(SignInFormModel data) async {
+    try {
+      final res = await http.post(
+        Uri.parse(
+          '$baseUrl/login',
+        ),
+        body: data.toJson(),
+      );
+
+      if (res.statusCode == 200) {
+        final user = UserModel.fromJson(jsonDecode(res.body));
+        user.copyWith(password: data.password);
+
+        return user;
+      } else {
+        throw jsonDecode(res.body)['message'];
+      }
     } catch (e) {
       rethrow;
     }
