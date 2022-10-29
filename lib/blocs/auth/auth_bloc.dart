@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:artos/models/sign_up_form_model.dart';
+import 'package:artos/models/user_model.dart';
 import 'package:artos/services/auth_service.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -26,6 +28,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(AuthFailed(e.toString()));
         }
       }
+
+      if (event is AuthRegister) {
+        try {
+          print('auth form register');
+
+          emit(AuthLoading());
+
+          final res = await AuthService().register(event.data);
+
+          emit(AuthSuccess(res));
+        } catch (e) {
+          print(e.toString());
+          emit(AuthFailed(e.toString()));
+        }
+      }
+
     });
   }
 }
