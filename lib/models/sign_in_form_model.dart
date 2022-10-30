@@ -2,7 +2,7 @@ class SignInFormModel {
   final String? email;
   final String? password;
 
-  const SignInFormModel({
+  SignInFormModel({
     this.email,
     this.password,
   });

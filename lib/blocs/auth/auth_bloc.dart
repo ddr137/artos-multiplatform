@@ -1,11 +1,9 @@
-import 'dart:async';
-
 import 'package:artos/models/sign_in_form_model.dart';
 import 'package:artos/models/sign_up_form_model.dart';
 import 'package:artos/models/user_model.dart';
 import 'package:artos/services/auth_service.dart';
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -50,6 +48,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(AuthLoading());
           final res = await AuthService().login(event.data);
           emit(AuthSuccess(res));
+        } catch (e) {
+          emit(AuthFailed(e.toString()));
+        }
+      }
+
+      if (event is AuthGetCurrent) {
+        try {
+          emit(AuthLoading());
+
+          final String token = await AuthService().getToken();
+
+          print(token);
+          emit(AuthTokenSuccess(token));
         } catch (e) {
           emit(AuthFailed(e.toString()));
         }

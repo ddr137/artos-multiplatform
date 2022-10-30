@@ -29,3 +29,13 @@ class AuthSuccess extends AuthState {
   List<Object> get props => [user];
 
 }
+
+class AuthTokenSuccess extends AuthState {
+
+  final String token;
+  const AuthTokenSuccess(this.token);
+
+  @override
+  List<Object> get props => [token];
+
+}

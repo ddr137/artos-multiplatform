@@ -12,8 +12,6 @@ import 'package:artos/ui/pages/profile_edit_success_page.dart';
 import 'package:artos/ui/pages/profile_page.dart';
 import 'package:artos/ui/pages/sign_in_page.dart';
 import 'package:artos/ui/pages/sign_up_page.dart';
-import 'package:artos/ui/pages/sign_up_set_ktp_profile_page.dart';
-import 'package:artos/ui/pages/sign_up_set_profile_page.dart';
 import 'package:artos/ui/pages/sign_up_success_page.dart';
 import 'package:artos/ui/pages/splash_page.dart';
 import 'package:artos/ui/pages/top_up_amount_page.dart';
@@ -36,7 +34,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => AuthBloc()),
+        BlocProvider(
+          create: (context) => AuthBloc()..add(AuthGetCurrent()),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

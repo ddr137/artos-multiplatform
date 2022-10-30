@@ -3,6 +3,7 @@ class UserModel {
   String? name;
   String? email;
   String? username;
+  String? password;
   String? emailVerifiedAt;
   int? verified;
   String? profilePicture;
@@ -21,6 +22,7 @@ class UserModel {
         this.name,
         this.email,
         this.username,
+        this.password,
         this.emailVerifiedAt,
         this.verified,
         this.profilePicture,
@@ -39,6 +41,7 @@ class UserModel {
     name = json['name'];
     email = json['email'];
     username = json['username'];
+    password = json['password'];
     emailVerifiedAt = json['email_verified_at'];
     verified = json['verified'];
     profilePicture = json['profile_picture'];
@@ -58,6 +61,7 @@ class UserModel {
     data['id'] = id;
     data['name'] = name;
     data['email'] = email;
+    data['password'] = password;
     data['username'] = username;
     data['email_verified_at'] = emailVerifiedAt;
     data['verified'] = verified;
@@ -87,6 +91,7 @@ class UserModel {
         username: username ?? this.username,
         name: name ?? this.name,
         email: email ?? this.email,
+        password: password ?? this.password,
         emailVerifiedAt: emailVerifiedAt,
         verified: verified,
         profilePicture: profilePicture,
