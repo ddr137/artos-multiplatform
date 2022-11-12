@@ -38,7 +38,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
           emit(AuthSuccess(res));
         } catch (e) {
-          print(e.toString());
           emit(AuthFailed(e.toString()));
         }
       }
@@ -59,8 +58,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
           final String token = await AuthService().getToken();
 
-          print(token);
           emit(AuthTokenSuccess(token));
+        } catch (e) {
+          emit(AuthFailed(e.toString()));
+        }
+      }
+
+      if (event is AuthLogout) {
+        try {
+          emit(AuthLoading());
+
+          await AuthService().logout();
+
+          emit(AuthInitial());
         } catch (e) {
           emit(AuthFailed(e.toString()));
         }

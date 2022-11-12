@@ -33,9 +33,11 @@ class AuthService {
         body: data.toJson(),
       );
 
+      print(jsonEncode(data).toString());
+
       if (res.statusCode == 200 || res.statusCode == 201) {
-        final user = UserModel.fromJson(jsonDecode(res.body));
-        user.copyWith(password: data.password);
+        UserModel user = UserModel.fromJson(jsonDecode(res.body));
+        user = user.copyWith(password: data.password);
 
         await storeCredentialToLocal(user);
 
@@ -72,6 +74,28 @@ class AuthService {
     }
   }
 
+  Future<void> logout () async {
+
+    try {
+
+      final token = await getToken();
+
+      final res = await http.post(Uri.parse('$baseUrl/logout'),
+      headers: {
+        'Authorization' : 'Bearer $token',
+      });
+
+      if (res.statusCode == 200) {
+        await clearLocalStorage();
+      } else {
+        throw jsonDecode(res.body)['message'];
+      }
+
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> storeCredentialToLocal (UserModel user) async {
     try {
       const storage = FlutterSecureStorage();
@@ -88,8 +112,6 @@ class AuthService {
 
     const storage = FlutterSecureStorage();
     String? value = await storage.read(key: 'token');
-
-    print(value);
 
     if (value != null) {
       token = value;
@@ -110,8 +132,6 @@ class AuthService {
           email: values['email'],
           password: values['password'],
         );
-
-        print('get user from local: ${data.toJson()}');
 
         return data;
       } else {

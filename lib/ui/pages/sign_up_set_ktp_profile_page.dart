@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:artos/shared/shared_methods.dart';
 import 'package:artos/shared/theme.dart';
 import 'package:artos/ui/widgets/button.dart';
-import 'package:artos/ui/widgets/form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -140,7 +139,9 @@ class _SignUpSetKtpPageState extends State<SignUpSetKtpPage> {
                           context.read<AuthBloc>().add(
                             AuthRegister(
                               widget.data.copyWith(
-                                ktp: 'data:image/png;base64,${base64Encode(File(selectedImage!.path)
+                                ktp: selectedImage == null
+                                  ? null
+                                : 'data:image/png;base64,${base64Encode(File(selectedImage!.path)
                                         .readAsBytesSync())}',
                               ),
                             ),
