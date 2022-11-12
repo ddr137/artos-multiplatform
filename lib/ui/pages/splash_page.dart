@@ -14,7 +14,7 @@ class SplashPage extends StatelessWidget {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
 
-          if(state is AuthTokenSuccess){
+          if(state is AuthSuccess){
             Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
           }
 
