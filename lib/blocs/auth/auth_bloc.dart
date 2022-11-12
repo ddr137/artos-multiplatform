@@ -1,29 +1,29 @@
 import 'package:artos/models/sign_in_form_model.dart';
 import 'package:artos/models/sign_up_form_model.dart';
+import 'package:artos/models/user_edit_form_model.dart';
 import 'package:artos/models/user_model.dart';
 import 'package:artos/services/auth_service.dart';
+import 'package:artos/services/user_service.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'auth_event.dart';
+
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(AuthInitial()) {
     on<AuthEvent>((event, emit) async {
-
-      if(event is AuthCheckEmail) {
+      if (event is AuthCheckEmail) {
         try {
-
           emit(AuthLoading());
           final res = await AuthService().checkEmail(event.email);
-          if(!res) {
+          if (!res) {
             emit(AuthCheckEmailSuccess());
           } else {
             emit(const AuthFailed('Email sudah terpakai'));
           }
-
-        } catch(e) {
+        } catch (e) {
           emit(AuthFailed(e.toString()));
         }
       }
@@ -76,6 +76,27 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       }
 
+      if (event is AuthUpdateUser) {
+        try {
+
+          if (state is AuthSuccess) {
+
+            final updateUser = (state as AuthSuccess).user.copyWith(
+                  username: event.data.username,
+                  name: event.data.name,
+                  email: event.data.email,
+                  password: event.data.password,
+                );
+            emit(AuthLoading());
+
+            await UserService().updateUser(event.data);
+
+            emit(AuthSuccess(updateUser));
+          }
+        } catch (e) {
+          emit(AuthFailed(e.toString()));
+        }
+      }
     });
   }
 }
