@@ -10,17 +10,15 @@ class WalletService {
 
     try {
 
-      final token = AuthService().getToken();
+      final token = await AuthService().getToken();
 
       final res = await http.put(
         Uri.parse('$baseUrl/wallets'),
         body: {
-          'previous' : oldPin,
+          'previous_pin' : oldPin,
           'new_pin' : newPin,
         },
-        headers: {
-          'Authorization' : 'Bearer $token'
-        }
+        headers: {'Authorization': 'Bearer $token'},
       );
 
       if (res.statusCode != 200) {

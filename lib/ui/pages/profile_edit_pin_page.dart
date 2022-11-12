@@ -33,7 +33,7 @@ class _ProfileEditPinPageState extends State<ProfileEditPinPage> {
           if (state is AuthSuccess) {
             Navigator.pushNamedAndRemoveUntil(
               context,
-              '/profile-edit-pin',
+              '/profile-edit-success',
               (route) => false,
             );
           }
@@ -64,12 +64,14 @@ class _ProfileEditPinPageState extends State<ProfileEditPinPage> {
                       title: 'Old PIN',
                       controller: oldPinController,
                       obscureText: true,
+                      keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 16),
                     CustomFormField(
                       title: 'New PIN',
                       controller: newPinController,
                       obscureText: true,
+                      keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 30),
                     CustomFilledButton(
