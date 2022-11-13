@@ -2,9 +2,22 @@ import 'package:artos/shared/theme.dart';
 import 'package:artos/ui/widgets/bank_item.dart';
 import 'package:artos/ui/widgets/button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class TopUpPage extends StatelessWidget {
+import '../../blocs/auth/auth_bloc.dart';
+import '../../blocs/payment_method/payment_method_bloc.dart';
+import '../../models/payment_method_model.dart';
+
+class TopUpPage extends StatefulWidget {
   const TopUpPage({Key? key}) : super(key: key);
+
+  @override
+  State<TopUpPage> createState() => _TopUpPageState();
+}
+
+class _TopUpPageState extends State<TopUpPage> {
+
+  PaymentMethodModel? selectedPaymentMethod;
 
   @override
   Widget build(BuildContext context) {
@@ -26,31 +39,40 @@ class TopUpPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          Row(
-            children: [
-              Image.asset(
-                'assets/img_wallet.png',
-                width: 80,
-              ),
-              const SizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '8080 1111 1999',
-                    style: blackTextStyle.copyWith(
-                      fontSize: 16,
-                      fontWeight: medium,
+          BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              if (state is AuthSuccess) {
+                return Row(
+                  children: [
+                    Image.asset(
+                      'assets/img_wallet.png',
+                      width: 80,
                     ),
-                  ),
-                  const SizedBox(width: 2),
-                  Text(
-                    'Dadan Ramdhani',
-                    style: greyTextStyle.copyWith(fontSize: 12),
-                  ),
-                ],
-              )
-            ],
+                    const SizedBox(width: 16),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          state.user.cardNumber!.replaceAllMapped(RegExp(
+                              r".{4}"), (match) => "${match.group(0)} "),
+                          style: blackTextStyle.copyWith(
+                            fontSize: 16,
+                            fontWeight: medium,
+                          ),
+                        ),
+                        const SizedBox(width: 2),
+                        Text(
+                          state.user.name!,
+                          style: greyTextStyle.copyWith(fontSize: 12),
+                        ),
+                      ],
+                    )
+                  ],
+                );
+              }
+
+              return Container();
+            },
           ),
           const SizedBox(height: 40),
           Text(
@@ -61,28 +83,39 @@ class TopUpPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          const BankItem(
-            title: 'BANK BCA',
-            imageUrl: 'assets/img_bank_bca.png',
-            isSelected: true,
-          ),
-          const BankItem(
-            title: 'BANK BNI',
-            imageUrl: 'assets/img_bank_bni.png',
-            isSelected: false,
-          ),
-          const BankItem(
-            title: 'BANK MANDIRI',
-            imageUrl: 'assets/img_bank_mandiri.png',
-            isSelected: false,
-          ),
-          const BankItem(
-            title: 'BANK OCBC',
-            imageUrl: 'assets/img_bank_ocbc.png',
-            isSelected: false,
+          BlocProvider(
+              create: (context) => PaymentMethodBloc()..add(PaymentMethodGet()),
+              child: BlocBuilder<PaymentMethodBloc, PaymentMethodState>(
+                builder: (context, state) {
+
+                  if (state is PaymentMethodSuccess) {
+                    return Column(
+                      children: state.data.map((e) {
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedPaymentMethod = e;
+                            });
+                          },
+                          child: BankItem(
+                            paymentMethodModel: e,
+                            isSelected: e.id == selectedPaymentMethod?.id,
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  }
+
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+
+
+                },
+              )
           ),
           const SizedBox(height: 12),
-          CustomFilledButton(
+          if (selectedPaymentMethod != null) CustomFilledButton(
             title: 'Continue',
             onPressed: () {
               Navigator.pushNamed(context, '/top-up-amount');
