@@ -28,10 +28,10 @@ class BankItem extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Image.network(
+          if (paymentMethodModel.thumbnail!.isNotEmpty) Image.network(
             paymentMethodModel.thumbnail!,
             height: 30,
-          ),
+          ) else const CircularProgressIndicator(),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
