@@ -44,7 +44,7 @@ class BankItem extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                paymentMethodModel.code!,
+                '50 mins',
                 style: greyTextStyle.copyWith(
                   fontSize: 12,
                 ),

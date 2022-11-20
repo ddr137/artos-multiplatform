@@ -14,7 +14,6 @@ import 'package:artos/ui/pages/sign_in_page.dart';
 import 'package:artos/ui/pages/sign_up_page.dart';
 import 'package:artos/ui/pages/sign_up_success_page.dart';
 import 'package:artos/ui/pages/splash_page.dart';
-import 'package:artos/ui/pages/top_up_amount_page.dart';
 import 'package:artos/ui/pages/top_up_page.dart';
 import 'package:artos/ui/pages/top_up_success.dart';
 import 'package:artos/ui/pages/transfer_amount_page.dart';
@@ -65,7 +64,6 @@ class MyApp extends StatelessWidget {
           '/profile-edit-pin': (context) => const ProfileEditPinPage(),
           '/profile-edit-success': (context) => const ProfileEditSuccessPage(),
           '/top-up': (context) => const TopUpPage(),
-          '/top-up-amount': (context) => const TopUpAmountPage(),
           '/top-up-success': (context) => const TopUpSuccessPage(),
           '/transfer': (context) => const TransferPage(),
           '/transfer-amount': (context) => const TransferAmountPage(),

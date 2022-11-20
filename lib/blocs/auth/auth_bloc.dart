@@ -57,7 +57,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         try {
           emit(AuthLoading());
 
-          final SignInFormModel data = await AuthService().getCredentialFromLocal();
+          final SignInFormModel data =
+              await AuthService().getCredentialFromLocal();
           final UserModel user = await AuthService().login(data);
 
           emit(AuthSuccess(user));
@@ -80,9 +81,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       if (event is AuthUpdateUser) {
         try {
-
           if (state is AuthSuccess) {
-
             final updateUser = (state as AuthSuccess).user.copyWith(
                   username: event.data.username,
                   name: event.data.name,
@@ -102,12 +101,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       if (event is AuthUpdatePin) {
         try {
-
           if (state is AuthSuccess) {
-
             final updateUser = (state as AuthSuccess).user.copyWith(
-              pin: event.newPin,
-            );
+                  pin: event.newPin,
+                );
             emit(AuthLoading());
 
             await WalletService().updatePin(event.oldPin, event.newPin);
@@ -116,6 +113,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           }
         } catch (e) {
           emit(AuthFailed(e.toString()));
+        }
+      }
+
+      if (event is AuthUpdateBalance) {
+        if (state is AuthSuccess) {
+
+          final currentUser = (state as AuthSuccess).user;
+
+          final updateUser = currentUser.copyWith(
+            balance: currentUser.balance! + event.amount,
+          );
+          emit(AuthSuccess(updateUser));
         }
       }
     });
