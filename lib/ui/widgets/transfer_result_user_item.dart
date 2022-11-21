@@ -1,19 +1,15 @@
 import 'package:artos/shared/theme.dart';
 import 'package:flutter/material.dart';
 
+import '../../models/user_model.dart';
+
 class TransferResultUserItem extends StatelessWidget {
-  final String imageUrl;
-  final String name;
-  final String username;
-  final bool isVerified;
+  final UserModel user;
   final bool isSelected;
 
   const TransferResultUserItem({
     Key? key,
-    required this.imageUrl,
-    required this.name,
-    required this.username,
-    this.isVerified = false,
+    required this.user,
     this.isSelected = false,
   }) : super(key: key);
 
@@ -21,7 +17,6 @@ class TransferResultUserItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 155,
-      height: 175,
       padding: const EdgeInsets.symmetric(
         vertical: 22,
         horizontal: 14,
@@ -42,10 +37,11 @@ class TransferResultUserItem extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(
-                image: AssetImage(imageUrl),
+                image: user.profilePicture == null ? const AssetImage('assets/img_profile.png')
+                    : NetworkImage(user.profilePicture!) as ImageProvider,
               ),
             ),
-            child: isVerified
+            child: user.verified == 1
                 ? Align(
                     alignment: Alignment.topRight,
                     child: Container(
@@ -68,7 +64,7 @@ class TransferResultUserItem extends StatelessWidget {
           ),
           const SizedBox(height: 13),
           Text(
-            name,
+            user.name.toString(),
             style: blackTextStyle.copyWith(
               fontSize: 16,
               fontWeight: medium,
@@ -76,7 +72,7 @@ class TransferResultUserItem extends StatelessWidget {
           ),
           const SizedBox(height: 2),
           Text(
-            '@$username',
+            '@${user.username}',
             style: greenTextStyle.copyWith(
               fontSize: 12,
             ),

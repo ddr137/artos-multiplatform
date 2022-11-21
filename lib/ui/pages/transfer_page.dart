@@ -1,12 +1,35 @@
+import 'package:artos/models/transfer_form_model.dart';
+import 'package:artos/models/user_model.dart';
 import 'package:artos/shared/theme.dart';
+import 'package:artos/ui/pages/transfer_amount_page.dart';
 import 'package:artos/ui/widgets/button.dart';
 import 'package:artos/ui/widgets/form.dart';
 import 'package:artos/ui/widgets/transfer_recent_user_item.dart';
 import 'package:artos/ui/widgets/transfer_result_user_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class TransferPage extends StatelessWidget {
+import '../../blocs/user/user_bloc.dart';
+
+class TransferPage extends StatefulWidget {
   const TransferPage({Key? key}) : super(key: key);
+
+  @override
+  State<TransferPage> createState() => _TransferPageState();
+}
+
+class _TransferPageState extends State<TransferPage> {
+  final usernameController = TextEditingController(text: '');
+  UserModel? selectedUser;
+
+  late UserBloc userBloc;
+
+  @override
+  void initState() {
+    super.initState();
+
+    userBloc = context.read<UserBloc>()..add(UserGetRecent());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,21 +49,43 @@ class TransferPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          const CustomFormField(
+          CustomFormField(
             title: 'by username',
             isShowTitle: false,
-          ),
-          buildResult(),
-          const SizedBox(height: 274),
-          CustomFilledButton(
-            title: 'Continue',
-            onPressed: () {
-              Navigator.pushNamed(context, '/transfer-amount');
+            controller: usernameController,
+            onFieldSubmitted: (value) {
+              if (value.isNotEmpty) {
+                userBloc.add(UserGetByUsername(value));
+              } else {
+                selectedUser = null;
+                userBloc.add(UserGetRecent());
+              }
+              setState(() {});
             },
           ),
+          usernameController.text.isEmpty ? buildRecentUsers() : buildResult(),
           const SizedBox(height: 50),
         ],
       ),
+      floatingActionButton: selectedUser != null
+          ? Container(
+              margin: const EdgeInsets.all(24),
+              child: CustomFilledButton(
+                title: 'Continue',
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TransferAmountPage(
+                            data: TransferFormModel(
+                                sendTo: selectedUser!.username,
+                            )),
+                      ));
+                },
+              ),
+            )
+          : Container(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
@@ -58,24 +103,33 @@ class TransferPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          const TransferRecentUserItem(
-            imageUrl: 'assets/img_friend1.png',
-            name: 'Ramdhani',
-            username: 'ddr',
-            isVerified: true,
-          ),
-          const TransferRecentUserItem(
-            imageUrl: 'assets/img_friend1.png',
-            name: 'Ramdhani',
-            username: 'ddr',
-            isVerified: false,
-          ),
-          const TransferRecentUserItem(
-            imageUrl: 'assets/img_friend1.png',
-            name: 'Ramdhani',
-            username: 'ddr',
-            isVerified: false,
-          ),
+          BlocBuilder<UserBloc, UserState>(
+            builder: (context, state) {
+              if (state is UserSuccess) {
+                return Column(
+                  children: state.users.map((user) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TransferAmountPage(
+                                  data: TransferFormModel(
+                                      sendTo: user.username,
+                                  )),
+                            ));
+                      },
+                      child: TransferRecentUserItem(user: user),
+                    );
+                  }).toList(),
+                );
+              }
+
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
+          )
         ],
       ),
     );
@@ -95,34 +149,32 @@ class TransferPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          Wrap(
-            runSpacing: 17,
-            spacing: 17,
-            children: const [
-              TransferResultUserItem(
-                imageUrl: 'assets/img_friend1.png',
-                name: 'Ramdhani',
-                username: 'ddr',
-                isVerified: true,
-                isSelected: true,
-              ),
-              TransferResultUserItem(
-                imageUrl: 'assets/img_friend2.png',
-                name: 'Dadan',
-                username: 'ddr',
-              ),
-              TransferResultUserItem(
-                imageUrl: 'assets/img_friend3.png',
-                name: 'Ramdhani',
-                username: 'ddr',
-                isVerified: true,
-              ),
-              TransferResultUserItem(
-                imageUrl: 'assets/img_friend4.png',
-                name: 'Dadan',
-                username: 'ddr',
-              ),
-            ],
+          BlocBuilder<UserBloc, UserState>(
+            builder: (context, state) {
+              if (state is UserSuccess) {
+                return Wrap(
+                  runSpacing: 17,
+                  spacing: 17,
+                  children: state.users.map((user) {
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedUser = user;
+                        });
+                      },
+                      child: TransferResultUserItem(
+                        user: user,
+                        isSelected: user.id == selectedUser?.id,
+                      ),
+                    );
+                  }).toList(),
+                );
+              }
+
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
           )
         ],
       ),

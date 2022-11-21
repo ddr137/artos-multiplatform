@@ -16,11 +16,12 @@ import 'package:artos/ui/pages/sign_up_success_page.dart';
 import 'package:artos/ui/pages/splash_page.dart';
 import 'package:artos/ui/pages/top_up_page.dart';
 import 'package:artos/ui/pages/top_up_success.dart';
-import 'package:artos/ui/pages/transfer_amount_page.dart';
 import 'package:artos/ui/pages/transfer_page.dart';
 import 'package:artos/ui/pages/transfer_success_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'blocs/user/user_bloc.dart';
 
 void main() {
   runApp(const MyApp());
@@ -35,6 +36,9 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (context) => AuthBloc()..add(AuthGetCurrent()),
+        ),
+        BlocProvider(
+          create: (context) =>  UserBloc(),
         ),
       ],
       child: MaterialApp(
@@ -66,7 +70,6 @@ class MyApp extends StatelessWidget {
           '/top-up': (context) => const TopUpPage(),
           '/top-up-success': (context) => const TopUpSuccessPage(),
           '/transfer': (context) => const TransferPage(),
-          '/transfer-amount': (context) => const TransferAmountPage(),
           '/transfer-success': (context) => const TransferSuccessPage(),
           '/data-provider': (context) => const DataProviderPage(),
           '/data-package': (context) => const DataPackagePage(),
