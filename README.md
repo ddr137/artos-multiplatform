@@ -1,1 +1,1 @@
-# artos-multiplatofrm
+# artos-multiplatform
