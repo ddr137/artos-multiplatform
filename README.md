@@ -1,6 +1,6 @@
 # artos
 
-Artos Dompet Digital indonesia.
+Artos Dompet Digital Indonesia.
 
 ## Getting Started
 
